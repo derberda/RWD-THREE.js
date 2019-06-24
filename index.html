@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <link rel="stylesheet" href="index.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+            rel="stylesheet">
+
+    </head>
+    <body>
+
+        <div id="webgl"></div>
+
+        <canvas id="myCanvas"></canvas>
+
+        <div id="overlay">
+            <div class="card">
+                <div class="close">+</div>
+                <div><p class="text">Button</p></div>
+                <div><p id="info">Der Button dient als Interaktion zwischen den Handschuhen. Durch einen Druck werden Daten zwischen den Geräten versendet und somit der Farbwechsel ausgelöst.</p></div>
+            </div>
+        </div>
+
+        <div id="overlay1">
+            <div class="card">
+                <div class="close">+</div>
+                <p class="text1">LED</p>
+                <p id="info1">Es werden insgesamt 32 LEDs angesteuert, die über den Colorpicker eine Grundfarbe annehmen und mit jeder weiteren Interaktion um die Farbe des anderen Handschuhs erweitert werden.</p>
+            </div>
+        </div>
+
+        <div id="overlay2">
+            <div class="card">
+                <div class="close">+</div>
+                <p class="text2">Raspberry PI</p>
+                <p id="info2">Dieser Mini-PC ist das Herzstück des Handschuhs. Hier laufen alle Prozesse zur Auswertung zusammen. Die Kommunikation der PCs spiegelt sich im Farbwechsel der LEDs wieder.</p>
+            </div>
+        </div>
+
+        <!-- <div id="overlay3">
+            <div class="card">
+                <div class="close">+</div>
+                <div><p class="text3">Powerbank</p></div>
+                <div><p id="info3">Die komplette Stromversorgung läuft über die austauschbare Powerbank und macht den Handschuh mit einer Laufzeit von ca. 10 Stunden zu dem perfekten Accessoire für eine Partynacht.</p></div>
+            </div>
+        </div> -->
+
+        <script src="imports/WebGL.js"></script>
+        <script
+            src="imports/dat.gui-master/dat.gui-master/build/dat.gui.min.js"></script>
+        <script
+            src="imports/three.js-master/three.js-master/build/three.js"></script>
+        <script
+            src="imports/three.js-master/three.js-master/examples/js/controls/OrbitControls.js"></script>
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script
+            src="imports/threex.domevents-master/threex.domevents-master/threex.domevents.js"></script>
+        <script
+            src="imports/three.js-master/three.js-master/examples/js/loaders/GLTFLoader.js"></script>
+        <script src="imports/stats.min.js"></script>
+        <script type="x-shader/x-vertex" id="vertexShader">
+  varying vec3 vWorldPosition;
+  void main() {
+      vec4 worldPosition = modelMatrix * vec4( position, 1.0 );
+      vWorldPosition = worldPosition.xyz;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  }
+</script>
+        <script type="x-shader/x-fragment" id="fragmentShader">
+  uniform vec3 topColor;
+  uniform vec3 bottomColor;
+  uniform float offset;
+  uniform float exponent;
+  varying vec3 vWorldPosition;
+  void main() {
+      float h = normalize( vWorldPosition + offset ).y;
+      gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h , 0.0), exponent ), 0.0 ) ), 1.0 );
+  }
+</script>
+        <script src="index.js"></script>
+
+    </body>
+</html>
